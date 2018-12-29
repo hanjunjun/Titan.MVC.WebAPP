@@ -1,0 +1,68 @@
+﻿/*加载等待样式*/
+.loadingCentercss {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background-color:white;
+}
+/*加载等待图片演示*/
+.loadingCentercss img {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;        
+}
+
+/*table表格样式*/
+.table{
+    width: 100%;
+}
+.table tr,.table tr th{
+    text-align: center;
+    height: 35px;
+}
+.table tr th{
+    background: #e7e7e7;
+}
+.table tr:nth-child(even){
+    background: #fff;
+}
+.table tr:nth-child(odd){
+    background: #f9f9f9;
+}
+.table tr{
+    border-bottom: 1px solid #e0e0e0;
+}
+.table tr:hover{
+    background: #c1e9ff;
+}
+.page{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 13px;
+}
+.table-click{
+    background: #85d4ff !important;
+}
+
+/*分页样式*/
+.num{
+    letter-spacing: 0;
+}
+.record:first-child ,.record:nth-child(6){
+    border-left:1px solid #cdcdcd !important;
+}
+.record{
+    border: 1px solid #e0e0e0;
+    padding: 3px 10px 3px 10px;
+    letter-spacing: normal;
+}
+.seat{
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}

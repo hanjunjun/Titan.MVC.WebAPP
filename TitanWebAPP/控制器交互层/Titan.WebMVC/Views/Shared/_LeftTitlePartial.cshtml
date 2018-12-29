@@ -1,0 +1,232 @@
+﻿@model List<Titan.Controllers.ViewModel.SysTitleViewList>
+<section>
+    <!-- #START# 左侧模块列表 -->
+    <aside id="leftsidebar" class="sidebar">
+        <!-- #START# 用户信息 -->
+        <div class="user-info">
+            <div class="image">
+                @if (ViewData["CommonDataEmployeePhotoUrl"] == null)
+                {
+                    <img onerror="this.src = '~/images/Common/defaultimg.png'" src="~/images/Common/defaultimg.png" width="58" height="58" alt="User" />
+                }
+                else
+                {
+                    <img onerror="this.src = '~/images/Common/defaultimg.png'" src="@ViewData["CommonDataEmployeePhotoUrl"]" width="58" height="58" alt="User" />
+                }
+            </div>
+            <div class="info-container">
+                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@ViewData["CommonDataUserName"]</div>
+                @*<div class="email">john.doe@example.com</div>*@
+                <div class="btn-group user-helper-dropdown">
+                    <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="javascript:void(0);"><i class="material-icons">person</i>个人信息</a></li>
+                        <li><a data-id="/Login/ChangePwdView"><i class="material-icons">lock_outline</i>修改密码</a></li>
+                        <li role="seperator" class="divider"></li>
+                        <li><a href="javascript:void(0);"><i class="material-icons">group</i>关注</a></li>
+                        <li role="seperator" class="divider"></li>
+                        <li><a href="/Login/LogOut"><i class="material-icons">input</i>退出系统</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- #END# 用户信息 -->
+        <!-- #START# 模块树 -->
+        <div class="menu">
+            <ul class="list">
+                <li class="header">导航</li>
+                <li class="active">
+                    <a id="HomePageObj" onclick="HomeClick(this)">
+                        <i class="material-icons">home</i>
+                        <span>工作台</span>
+                    </a>
+                </li>
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">@item.TitleImgUrl</i>
+                            <span>@item.TitleName</span>
+                        </a>
+                        <ul class="ml-menu">
+                            @foreach (var stl in item.SysTitleViewLists)
+                            {
+                                <li>
+                                    <a data-id="@stl.TitleUrl">@stl.TitleName</a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                <li class="header">标签</li>
+                <li>
+                    <a href="javascript:void(0);">
+                        <i class="material-icons col-amber">donut_large</i>
+                        <span>错误信息</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);">
+                        <i class="material-icons col-light-blue">donut_large</i>
+                        <span>系统信息</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- #END# 模块树 -->
+        <!-- #START# 左侧模块列表底部 -->
+        <div class="legal">
+            <div class="copyright">
+                &copy;<a href="javascript:void(0);" id="BottomSysTitle">@ViewData["CommonDataSysTitle"]</a>.
+            </div>
+            <div class="version">
+                <b>Version: </b> 1.0
+            </div>
+        </div>
+        <!-- #END# 左侧模块列表底部 -->
+    </aside>
+    <!-- #END# 左侧模块列表 -->
+    <!-- #START# 右侧隐藏的样式选择列表 -->
+    <aside id="rightsidebar" class="right-sidebar">
+        <ul class="nav nav-tabs tab-nav-right" role="tablist">
+            <li role="presentation" class="active"><a href="#skins" data-toggle="tab">皮肤</a></li>
+            <li role="presentation"><a href="#settings" data-toggle="tab">设置</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+                <ul class="demo-choose-skin">
+                    <li data-theme="red" class="active">
+                        <div class="red"></div>
+                        <span>Red</span>
+                    </li>
+                    <li data-theme="pink">
+                        <div class="pink"></div>
+                        <span>Pink</span>
+                    </li>
+                    <li data-theme="purple">
+                        <div class="purple"></div>
+                        <span>Purple</span>
+                    </li>
+                    <li data-theme="deep-purple">
+                        <div class="deep-purple"></div>
+                        <span>Deep Purple</span>
+                    </li>
+                    <li data-theme="indigo">
+                        <div class="indigo"></div>
+                        <span>Indigo</span>
+                    </li>
+                    <li data-theme="blue">
+                        <div class="blue"></div>
+                        <span>Blue</span>
+                    </li>
+                    <li data-theme="light-blue">
+                        <div class="light-blue"></div>
+                        <span>Light Blue</span>
+                    </li>
+                    <li data-theme="cyan">
+                        <div class="cyan"></div>
+                        <span>Cyan</span>
+                    </li>
+                    <li data-theme="teal">
+                        <div class="teal"></div>
+                        <span>Teal</span>
+                    </li>
+                    <li data-theme="green">
+                        <div class="green"></div>
+                        <span>Green</span>
+                    </li>
+                    <li data-theme="light-green">
+                        <div class="light-green"></div>
+                        <span>Light Green</span>
+                    </li>
+                    <li data-theme="lime">
+                        <div class="lime"></div>
+                        <span>Lime</span>
+                    </li>
+                    <li data-theme="yellow">
+                        <div class="yellow"></div>
+                        <span>Yellow</span>
+                    </li>
+                    <li data-theme="amber">
+                        <div class="amber"></div>
+                        <span>Amber</span>
+                    </li>
+                    <li data-theme="orange">
+                        <div class="orange"></div>
+                        <span>Orange</span>
+                    </li>
+                    <li data-theme="deep-orange">
+                        <div class="deep-orange"></div>
+                        <span>Deep Orange</span>
+                    </li>
+                    <li data-theme="brown">
+                        <div class="brown"></div>
+                        <span>Brown</span>
+                    </li>
+                    <li data-theme="grey">
+                        <div class="grey"></div>
+                        <span>Grey</span>
+                    </li>
+                    <li data-theme="blue-grey">
+                        <div class="blue-grey"></div>
+                        <span>Blue Grey</span>
+                    </li>
+                    <li data-theme="black">
+                        <div class="black"></div>
+                        <span>Black</span>
+                    </li>
+                </ul>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="settings">
+                <div class="demo-settings">
+                    <p>常规设置</p>
+                    <ul class="setting-list">
+                        <li>
+                            <span>使用报告面板</span>
+                            <div class="switch">
+                                <label><input type="checkbox" checked><span class="lever"></span></label>
+                            </div>
+                        </li>
+                        <li>
+                            <span>邮件重定向</span>
+                            <div class="switch">
+                                <label><input type="checkbox"><span class="lever"></span></label>
+                            </div>
+                        </li>
+                    </ul>
+                    <p>系统设置</p>
+                    <ul class="setting-list">
+                        <li>
+                            <span>接收通知</span>
+                            <div class="switch">
+                                <label><input type="checkbox" checked><span class="lever"></span></label>
+                            </div>
+                        </li>
+                        <li>
+                            <span>自动更新</span>
+                            <div class="switch">
+                                <label><input type="checkbox" checked><span class="lever"></span></label>
+                            </div>
+                        </li>
+                    </ul>
+                    <p>帐户设置</p>
+                    <ul class="setting-list">
+                        <li>
+                            <span>离线</span>
+                            <div class="switch">
+                                <label><input type="checkbox"><span class="lever"></span></label>
+                            </div>
+                        </li>
+                        <li>
+                            <span>定位许可</span>
+                            <div class="switch">
+                                <label><input type="checkbox" checked><span class="lever"></span></label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- #END# 右侧隐藏的样式选择列表 -->
+</section>

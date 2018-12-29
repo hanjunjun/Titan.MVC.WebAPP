@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片懒加载</title>
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+            
+        table {
+            /*设置相邻单元格的边框间的距离*/
+            border-spacing: 0;
+            /*表格设置合并边框模型*/
+            border-collapse: collapse;
+            text-align: center;
+        }
+        /*关键设置 tbody出现滚动条*/
+        table tbody {
+            display: block;
+            height: 250px;
+            overflow-y: scroll;
+        }
+            
+        table thead,
+        tbody tr {
+            display: table;
+            width: 99%;
+            table-layout: fixed;
+        }
+        /*关键设置：滚动条默认宽度是16px 将thead的宽度减16px*/
+        table thead {
+            width: calc( 100% - 1em)
+        }
+            
+            
+        table thead th {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+<div style="height: 100px">
+    <span style="height: 100px"></span>
+</div>
+<table border="1" id="dataTable">
+    <thead>
+    <tr>
+        <th>图片名</th>
+        <th>图片</th>
+    </tr>
+    </thead>
+    <tbody id="dataList">
+    </tbody>
+</table>
+</body>
+</html>
+<script src="../js/Common/Common.js"></script>
+<script>
+    var clock; //延迟定时器对象
+    var html = "<tr>" +
+        "<td>测试</td>" +
+        "<td><img src='http://gaobili.cn/images/user.png' /></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>测试1</td>" +
+        "<td><img src='http://gaobili.cn/images/user.png' /></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>测试2</td>" +
+        "<td><img src='http://gaobili.cn/images/user.png' /></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>测试3</td>" +
+        "<td><img src='http://gaobili.cn/images/user.png' /></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td>测试4</td>" +
+        "<td><img src='http://gaobili.cn/images/user.png' /></td>" +
+        "</tr>";
+
+    $(document).ready(function () {
+        GetData();//首次进入加载第一页
+        $("#dataList").scroll(function () {
+            if (clock) { // 如果在300毫秒内进行scroll的话，都会被clearTimeout掉，setTimeout不会执行。
+                //如果有300毫秒外的操作，会得到一个新的timeID即clock，会执行一次setTimeout,然后保存这次setTimeout的ID，
+                //对于300毫秒内的scroll事件，不会生成新的timeID值，所以会一直被clearTimeout掉，不会执行setTimeout.
+                clearTimeout(clock);
+            }
+            clock = setTimeout(function() {
+                    console.log('运行了一次');
+                    lazyRender();
+                },
+                300);
+        });
+    });
+
+    function lazyRender() {
+        if (checkShow($("#dataList"))) {
+            GetData();
+        }
+    }
+
+    function checkShow(dom) {
+        var viewHeight = $(dom).height(); //可见高度
+        var contentH = $(dom).get(0).scrollHeight; //滚动区域实际内容高度
+        var offsetTop = $(dom).scrollTop(); //滚动条头距离dom的距离（这里是内部的距离不是页面上的距离）
+        /*
+         * 第一页：单个内容高度= 可见高度250+20=270 （20是1页的时候滚动条能滚动的最大距离）
+         * 第二页：单个内容高度=250+滚动条内部高度290=540 （290是2页的时候滚动条能滚的最大距离）
+         * 滚动区域内部实际高度=滚动条头到dom的内部高度+可见高度
+         * 可见高度其实是tbody的高度，同时也是滚动条内部头+滚动体+下半部分的高度。（头到底部的高度是可见高度，头到tbody的距离是滚动条头到dom的距离）
+         */
+        if (contentH - viewHeight - offsetTop <= 10) { //滚动条快到最底部的时候加载下一页的数据。实现懒加载。
+            //$(dom).scrollTop($(dom).scrollTop()-5);
+            return true;
+        }
+        return false;
+    }
+
+    //模拟加载数据
+    function GetData() {
+        //这里ajax要用同步的方式调用
+        $.ajax({
+            url: "http://localhost:8508/api/user/get",
+            method: "get",
+            async:false,
+            headers: { "auth": getToken() },//通过请求头来发送token，放弃了通过cookie的发送方式
+            success: function (data) {
+                $("#dataList").append(html);
+            },
+            error: function(e) {
+                alert(e);
+            }
+        });
+    }
+</script>

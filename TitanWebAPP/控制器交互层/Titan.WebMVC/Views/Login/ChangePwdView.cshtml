@@ -1,0 +1,175 @@
+﻿@model Titan.Controllers.ViewModel.ChangePwdView
+@{
+    Layout = null;
+}
+<!-- 模块标题 -->
+<div class="block-header">
+    <h2>修改密码</h2>
+</div>
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="javascript:void(0);">帮助</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body">
+                <form class="form-horizontal" id="formData">
+                    @*旧密码*@
+                    <div class="row clearfix">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            <label for="password_2">旧密码</label>
+                        </div>
+                        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    @Html.PasswordFor(x => x.EmployeePwd, new { id = "EmployeePwd", @class = "form-control", maxlength = "20", placeholder = "请输入旧密码", Value = Model.EmployeePwd })
+                                    @*<input type="password" id="password_2" class="form-control" placeholder="Enter your password">*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*新密码*@
+                    <div class="row clearfix">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            <label for="password_2">新密码</label>
+                        </div>
+                        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    @Html.PasswordFor(x => x.EmployeeNewPwd, new { id = "EmployeeNewPwd", @class = "form-control", maxlength = "20", placeholder = "请输入新密码", Value = Model.EmployeeNewPwd })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*确认密码*@
+                    <div class="row clearfix">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            <label for="password_2">确认密码</label>
+                        </div>
+                        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    @Html.PasswordFor(x => x.EmployeeNewPwdSecond, new { id = "EmployeeNewPwdSecond", @class = "form-control", maxlength = "20", placeholder = "确认新密码", Value = Model.EmployeeNewPwdSecond })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
+                            <button type="submit" class="btn btn-primary m-t-15 waves-effect" onclick="VIDNumber()">确&nbsp;&nbsp;定</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Script/Validate");
+<script type="text/javascript">
+    $(function () {
+        //验证旧密码是否正确
+        jQuery.validator.addMethod("IsPwd", function (value, element) {
+
+            var bool = false;
+            $.ajax
+            ({
+                type: "get",
+                url: "/Login/ValidatePwd",
+                data: { employeePwd: $("#EmployeePwd").val() },
+                async: false,
+                success: function (data) {
+                    if (data == "1") {
+                        bool = true;
+                    } else {
+                        bool = false;
+                    }
+                }
+            });
+            return bool;
+        });
+        //验证密码是否一致
+        jQuery.validator.addMethod("IsSame", function (value, element) {
+            var bool = false;
+            if ($("#EmployeeNewPwd").val() == value) {
+                bool = true;
+            }
+            else {
+                bool = false;
+            }
+            return bool;
+        });
+
+        $("#EmployeePwd").focus();
+    });
+
+    //修改保存
+    function VIDNumber() {
+        //验证
+        $("#formData").validate({
+            submitHandler: function (form) {
+                $.ajax
+            ({
+                type: "post",
+                url: "/Login/ChangePwd",
+                data: { employeePwd: $("#EmployeePwd").val(), employeeNewPwd: $("#EmployeeNewPwd").val(), employeeNewPwdSecond: $("#EmployeeNewPwdSecond").val() },
+                success: function (data) {
+                    if (data == "success") {
+                        swal({
+                            title: "修改密码成功，请重新登录系统！",
+                            text: "",
+                            imageUrl: "/images/thumbs-up.png",
+                            button: "确定",
+                        },function(){
+                            location.reload();
+                        });
+                        
+                    } else {
+                        swal({
+                            title: "错误",
+                            text: data,
+                            imageUrl: "/images/Common/error.png"
+                        });
+                    }
+                }
+            });
+            },
+            rules: {
+                EmployeePwd: {
+                    required: true,
+                    IsPwd: true
+                },
+                EmployeeNewPwd: {
+                    required: true
+                },
+                EmployeeNewPwdSecond: {
+                    required: true,
+                    IsSame: true
+                }
+            },
+            messages: {
+                EmployeePwd: {
+                    required: "旧密码不能为空",
+                    IsPwd: "旧密码不正确"
+                },
+                EmployeeNewPwd: {
+                    required: "新密码不能为空"
+                },
+                EmployeeNewPwdSecond: {
+                    required: "新密码不能为空",
+                    IsSame: "两次密码不一致"
+                }
+            }
+        });
+        return false;
+    }
+</script>

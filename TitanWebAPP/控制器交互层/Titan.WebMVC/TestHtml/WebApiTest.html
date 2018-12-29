@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <fieldset>
+        <legend>身份验证</legend>
+        <form>
+            <label for="UserName">用户名:</label><input type="text" name="UserName" id="UserName" value="admin" />
+            <br />
+            <br />
+            <label for="Password">密码:</label><input type="password" name="Password" id="Password" value="123" />
+            <br />
+            <br />
+            <input type="text"  id="VerifyCodeTxt" name="VerifyCodeTxt" maxlength="4"  placeholder="验证码" >
+            <img id="VerifyCode" style="cursor: pointer"  alt="验证码" title="" />
+        </form>
+        <button id="login">登录</button>
+    </fieldset>
+    <br />
+
+    <fieldset>
+        <legend>jquery接口测试</legend>
+        <button id="get">get接口</button>
+        <button id="post">post接口</button>
+    </fieldset>
+<fieldset>
+    <legend>axios接口测试</legend>
+    <button id="axiosPost">登录</button>
+    <button id="axiosGet">获取name</button>
+</fieldset>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="../js/Common/Common.js"></script>
+<script src="../js/Common/auth.util.js"></script>
+<script src="../js/Common/auth.cfg.js"></script>
+<script src="/plugins/jquery/jquery.min.js"></script>
+<script>
+    $(function () {
+        console.log("进入页面");
+        //调用api站点的登录接口,接口在登录成功后返回一个token。
+        $("#login").on("click", function () {
+            $.ajax({
+                url: "http://localhost:8508/api/user/login",
+                data: $("form").serialize(),
+                method: "post",
+                success: function (data) {
+                    if (data.Success) {
+                        //为简单起见，将token保存在全局变量中。
+                        window.token = data.Token;
+                        setToken(data.Token);
+                        alert("获取token："+data.Token);
+                    } else {
+                        alert(data.Message);
+                    }
+                }
+            });
+        });
+
+        //调用api站点的获取数据的接口，该接口要求身份验证。
+        $("#get").on("click", function () {
+            console.log(window.token);
+            $.ajax({
+                url: "http://localhost:8508/api/user/get",
+                method: "get",
+                headers: { "auth": getToken() },//通过请求头来发送token，放弃了通过cookie的发送方式
+                complete: function (jqXHR,textStatus) {
+                    alert(jqXHR.responseText);
+                }
+
+            });
+        });
+
+        //post
+        $("#post").on("click", function () {
+            console.log(window.token);
+            $.ajax({
+                url: "http://localhost:8508/api/user/Post",
+                method: "post",
+                headers: { "auth": getToken() },//通过请求头来发送token，放弃了通过cookie的发送方式
+                complete: function (jqXHR,textStatus) {
+                    alert(jqXHR.responseText);
+                }
+
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        console.log("dom加载完毕");
+        //刷新验证码
+        $("#VerifyCode").click(function () {
+            GenrateVerifyCode();
+        });
+    });
+
+    //生成验证码
+    function GenrateVerifyCode() {
+        $("#VerifyCode").val('');
+        $("#VerifyCode").attr("src", "/api/user/VerifyCode");
+    }
+
+    $("#axiosGet").click(function () {
+        //axios get test
+        AxiosObj.get('user/axiosget')
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+
+    //登录
+    $("#axiosPost").click(function () {
+        let axios_signin = axios.create({
+            baseURL: _baseUrl,
+            //auth: {
+            //    username: _userName,
+            //    password: _password
+            //}
+        });
+        axios_signin.post('user/axiospost', {
+                UserName: 'tt1',
+                Password: '1'
+            })
+            .then(function (response) {
+                let storage = getStorageObj();
+                storage.setItem(_param, response.data.Token);
+                alert(response.data.Message);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+</script>
+</body>
+</html>

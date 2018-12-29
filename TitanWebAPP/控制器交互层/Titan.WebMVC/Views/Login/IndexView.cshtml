@@ -1,0 +1,13 @@
+﻿<script>
+    $.ajax({
+        type: "GET",
+        url: "/Home/HomePageView",
+        success: function (mess) {
+            $("#NewDataView").empty();
+            $("#NewDataView").html(mess);
+        },
+        error: function (error) {
+            
+        }
+    });
+</script>

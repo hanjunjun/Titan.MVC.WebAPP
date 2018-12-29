@@ -1,0 +1,92 @@
+﻿@using Titan.Controllers.ViewModel
+@using Titan.Infrastructure.Domain
+@model SysDataBackMViewList
+@{
+                /**/
+
+                Layout = null;
+}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>数据库文件名</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>文件大小</th>
+            <th>数据库文件路径</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.SysDataBackMViewLists)
+        {
+            <tr>
+                <td>@item.DataBackMFileName</td>
+                <td>@(item.DataBackMStartTime == null ? "" : item.DataBackMStartTime.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                <td>@(item.DataBackMEndTime == null ? "" : item.DataBackMEndTime.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                <td>@item.DataBackMFileSize</td>
+                <td>@item.DataBackMFilePath</td>
+                <td><i class="material-icons">person</i>编辑</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.NewPagination(
+    Model.PagingInfo
+    , Model.ViewQuery.StartDateTime == null ? null : Model.ViewQuery.StartDateTime.Value.ToString("yyyy-MM-dd")
+    , Model.ViewQuery.EndDateTime == null ? null : Model.ViewQuery.EndDateTime.Value.ToString("yyyy-MM-dd")
+    , Model.ViewQuery.Param1)
+<nav>
+    <ul class="pagination">
+        <li class="disabled">
+            <a href="javascript:void(0);">
+                <i class="material-icons">chevron_left</i>
+            </a>
+        </li>
+        <li class="active"><a href="javascript:void(0);">1</a></li>
+        <li><a href="javascript:void(0);" class="waves-effect">2</a></li>
+        <li><a href="javascript:void(0);" class="waves-effect">3</a></li>
+        <li><a href="javascript:void(0);" class="waves-effect">4</a></li>
+        <li><a href="javascript:void(0);" class="waves-effect">5</a></li>
+        <li>
+            <a href="javascript:void(0);" class="waves-effect">
+                <i class="material-icons">chevron_right</i>
+            </a>
+        </li>
+    </ul>
+</nav>
+<script type="text/javascript">
+    //窗体加载完成
+    $(document).ready(function () {
+        $(".selecthid").hide();
+        for (var i = 1; i < 6; i++) {
+            if ($("#s" + i) != null)
+                $("#s" + i).show();
+        }
+    });
+
+    //分页调用
+    function pageSumit2(startTime, endTime, key, pageIndex, pageSize, svalue) {
+        $.ajax({
+            type: "GET",
+            url: "/SysDataBackM/MemberShipMOtherListViewBy",
+            data: {
+                startTime: startTime,
+                endTime: endTime,
+                key: key,
+                pageIndex: pageIndex,
+                pageSize: pageSize
+            },
+            success: function (mess) {
+                $('#DataTableView').empty();
+                $('#DataTableView').html(mess);
+                $(".selecthid").hide();
+                var ud = parseInt((svalue - 1) / 5);
+                for (var i = ud * 5 + 1; i < (ud + 1) * 5 + 1; i++) {
+                    if ($("#s" + i) != null)
+                        $("#s" + i).show();
+                }
+            }
+        });
+    }
+</script>
